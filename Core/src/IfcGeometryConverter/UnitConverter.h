@@ -233,78 +233,87 @@ namespace OpenInfraPlatform
 						std::dynamic_pointer_cast<typename IfcEntityTypesT::IfcSIUnit>(unit);
 					if (SIUnit)
 					{
-						// ENTITY IfcSIUnit
-						//	SUBTYPE OF(IfcNamedUnit);
-						//	Prefix: OPTIONAL IfcSIPrefix;
-						//	Name: IfcSIUnitName;
-						// DERIVE
-						//	SELF\IfcNamedUnit.Dimensions : IfcDimensionalExponents: = IfcDimensionsForSiUnit(SELF.Name);
-						// END_ENTITY;
-
-						// get the prefix factor
-						double dPrefixFactor = 1.;
-						if( SIUnit->Prefix)
-						{
-							switch (SIUnit->Prefix)
-							{
-							case typename IfcEntityTypesT::IfcSIPrefix::ENUM::ENUM_EXA:
-							    dPrefixFactor = 1E18;
-							    break;
-							case typename IfcEntityTypesT::IfcSIPrefix::ENUM::ENUM_PETA:
-							    dPrefixFactor = 1E15;
-							    break;
-							case typename IfcEntityTypesT::IfcSIPrefix::ENUM::ENUM_TERA:
-							    dPrefixFactor = 1E12;
-							    break;
-							case typename IfcEntityTypesT::IfcSIPrefix::ENUM::ENUM_GIGA:
-							    dPrefixFactor = 1E9;
-							    break;
-							case typename IfcEntityTypesT::IfcSIPrefix::ENUM::ENUM_MEGA:
-							    dPrefixFactor = 1E6;
-							    break;
-							case typename IfcEntityTypesT::IfcSIPrefix::ENUM::ENUM_KILO:
-							    dPrefixFactor = 1E3;
-							    break;
-							case typename IfcEntityTypesT::IfcSIPrefix::ENUM::ENUM_HECTO:
-							    dPrefixFactor = 1E2;
-							    break;
-							case typename IfcEntityTypesT::IfcSIPrefix::ENUM::ENUM_DECA:
-							    dPrefixFactor = 1E1;
-							    break;
-							case typename IfcEntityTypesT::IfcSIPrefix::ENUM::ENUM_DECI:
-							    dPrefixFactor = 1E-1;
-							    break;
-							case typename IfcEntityTypesT::IfcSIPrefix::ENUM::ENUM_CENTI:
-							    dPrefixFactor = 1E-2;
-							    break;
-							case typename IfcEntityTypesT::IfcSIPrefix::ENUM::ENUM_MILLI:
-							    dPrefixFactor = 1E-3;
-							    break;
-							case typename IfcEntityTypesT::IfcSIPrefix::ENUM::ENUM_MICRO:
-							    dPrefixFactor = 1E-6;
-							    break;
-							case typename IfcEntityTypesT::IfcSIPrefix::ENUM::ENUM_NANO:
-							    dPrefixFactor = 1E-9;
-							    break;
-							case typename IfcEntityTypesT::IfcSIPrefix::ENUM::ENUM_PICO:
-							    dPrefixFactor = 1E-12;
-							    break;
-							case typename IfcEntityTypesT::IfcSIPrefix::ENUM::ENUM_FEMTO:
-							    dPrefixFactor = 1E-15;
-							    break;
-							case typename IfcEntityTypesT::IfcSIPrefix::ENUM::ENUM_ATTO:
-							    dPrefixFactor = 1E-18;
-							    break;
-							default:
-								dPrefixFactor = 1.;
-								break;
-							} // end switch (SIUnit->Prefix)
-						} // end if (SIUnit->Prefix)
-
-						return dPrefixFactor;
+						return getSIPrefixFactor(SIUnit);
 					}
 
 					return 1.;
+				}
+
+				/**
+				 * @brief Get's the factor to convert to the specified SI unit
+				 * 
+				 * @param SIUnit 
+				 * @return double 
+				 */
+				double getSIPrefixFactor(const std::shared_ptr<typename IfcEntityTypesT::IfcSIUnit> SIUnit) const {
+					// ENTITY IfcSIUnit
+					//	SUBTYPE OF(IfcNamedUnit);
+					//	Prefix: OPTIONAL IfcSIPrefix;
+					//	Name: IfcSIUnitName;
+					// DERIVE
+					//	SELF\IfcNamedUnit.Dimensions : IfcDimensionalExponents: = IfcDimensionsForSiUnit(SELF.Name);
+					// END_ENTITY;
+
+					double dPrefixFactor = 1.;
+					if( SIUnit->Prefix)
+					{
+						switch (SIUnit->Prefix)
+						{
+						case typename IfcEntityTypesT::IfcSIPrefix::ENUM::ENUM_EXA:
+						    dPrefixFactor = 1E18;
+						    break;
+						case typename IfcEntityTypesT::IfcSIPrefix::ENUM::ENUM_PETA:
+						    dPrefixFactor = 1E15;
+						    break;
+						case typename IfcEntityTypesT::IfcSIPrefix::ENUM::ENUM_TERA:
+						    dPrefixFactor = 1E12;
+						    break;
+						case typename IfcEntityTypesT::IfcSIPrefix::ENUM::ENUM_GIGA:
+						    dPrefixFactor = 1E9;
+						    break;
+						case typename IfcEntityTypesT::IfcSIPrefix::ENUM::ENUM_MEGA:
+						    dPrefixFactor = 1E6;
+						    break;
+						case typename IfcEntityTypesT::IfcSIPrefix::ENUM::ENUM_KILO:
+						    dPrefixFactor = 1E3;
+						    break;
+						case typename IfcEntityTypesT::IfcSIPrefix::ENUM::ENUM_HECTO:
+						    dPrefixFactor = 1E2;
+						    break;
+						case typename IfcEntityTypesT::IfcSIPrefix::ENUM::ENUM_DECA:
+						    dPrefixFactor = 1E1;
+						    break;
+						case typename IfcEntityTypesT::IfcSIPrefix::ENUM::ENUM_DECI:
+						    dPrefixFactor = 1E-1;
+						    break;
+						case typename IfcEntityTypesT::IfcSIPrefix::ENUM::ENUM_CENTI:
+						    dPrefixFactor = 1E-2;
+						    break;
+						case typename IfcEntityTypesT::IfcSIPrefix::ENUM::ENUM_MILLI:
+						    dPrefixFactor = 1E-3;
+						    break;
+						case typename IfcEntityTypesT::IfcSIPrefix::ENUM::ENUM_MICRO:
+						    dPrefixFactor = 1E-6;
+						    break;
+						case typename IfcEntityTypesT::IfcSIPrefix::ENUM::ENUM_NANO:
+						    dPrefixFactor = 1E-9;
+						    break;
+						case typename IfcEntityTypesT::IfcSIPrefix::ENUM::ENUM_PICO:
+						    dPrefixFactor = 1E-12;
+						    break;
+						case typename IfcEntityTypesT::IfcSIPrefix::ENUM::ENUM_FEMTO:
+						    dPrefixFactor = 1E-15;
+						    break;
+						case typename IfcEntityTypesT::IfcSIPrefix::ENUM::ENUM_ATTO:
+						    dPrefixFactor = 1E-18;
+						    break;
+						default:
+							dPrefixFactor = 1.;
+							break;
+						} // end switch (SIUnit->Prefix)
+					} // end if (SIUnit->Prefix)
+					
+					return dPrefixFactor;
 				}
 
 				/*! \brief Converts the unit to a factor to obtain SI unit.
@@ -397,7 +406,8 @@ namespace OpenInfraPlatform
 				double convertValue(const typename IfcEntityTypesT::IfcValue& value) const
 				{
 					//TODO IfcValue conversion
-					return 1.;
+					return (double) value;
+					//return 1.;
 				}
 
 				/*! \brief Gets the factor for length.

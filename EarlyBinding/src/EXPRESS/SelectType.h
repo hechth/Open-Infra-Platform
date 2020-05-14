@@ -49,8 +49,23 @@ public:
 	}
 };
 
+
+
 template <typename ...Args> class SelectType : public ValueType<boost::variant<Args...>> {
 	using base = ValueType<boost::variant<Args...>>;
+
+	template <typename TCast> class visitor_cast : public boost::static_visitor<TCast> {
+		public:
+		template <typename TVisited>
+		TCast operator()(const TVisited &operand) const {
+			if(boost::detail::variant::holds_element<decltype(operand.m_value), TCast >::value)
+				return boost::get<TCast>(operand.m_value);
+			else
+				return (TCast) operand;
+		}
+	};
+
+	friend class visitor_cast<double>;
 
 	template<std::size_t I = 0, typename Function>
 	static inline typename std::enable_if<I == sizeof...(Args), void>::type
@@ -75,12 +90,14 @@ public:
 	const size_t which() const { return base::m_value.which(); };
 
 	template <class T> explicit operator T&() & {
-		static_assert(boost::detail::variant::holds_element<Select, T >::value, "Cast to type is not defined.");
-		return std::ref(boost::get<T>(base::m_value));
+		//static_assert(boost::detail::variant::holds_element<Select, T >::value, "Cast to type is not defined.");
+		//return std::ref(boost::get<T>(base::m_value));
+		return std::ref(boost::apply_visitor(visitor_cast<T>(), base::m_value));
 	}
 	template <class T> explicit operator const T() const {
-		static_assert(boost::detail::variant::holds_element<Select, T >::value, "Cast to type is not defined.");
-		return boost::get<T>(base::m_value);
+		//static_assert(boost::detail::variant::holds_element<Select, T >::value, "Cast to type is not defined.");
+		//return boost::get<T>(base::m_value);
+		return boost::apply_visitor(visitor_cast<T>(), base::m_value);
 	}
 
 	template <size_t Index> auto get() -> std::tuple_element_t<Index, std::tuple<Args...>> {
